@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id        String   @id
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model EventTicket {
+  id           String   @id
+  ticketId     String   @unique
+  fullName     String
+  email        String
+  phone        String
+  ticketType   String
+  ticketPrice  String
+  reference    String
+  status       String   @default("VALID")
+  purchaseDate DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+}
+
+model Nomination {
+  id             String   @id
+  nomineeName    String
+  category       String
+  description    String
+  nomineeEmail   String?
+  nomineePhone   String?
+  nominatorName  String
+  nominatorEmail String
+  status         String   @default("PENDING")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+}
+
+model Nominee {
+  id           String   @id
+  name         String
+  category     String
+  bio          String
+  image        String?
+  nominationId String?  @unique
+  isVisible    Boolean  @default(false)
+  votesCount   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  Vote         Vote[]
+}
+
+model Popup {
+  id         String   @id
+  title      String
+  body       String
+  ctaText    String?
+  ctaLink    String?
+  targetPage String   @default("all")
+  duration   Int      @default(5000)
+  isEnabled  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+}
+
+model StandBooking {
+  id             String   @id
+  bookingId      String   @unique
+  orgName        String
+  contactName    String
+  email          String
+  phone          String
+  standType      String
+  notes          String?
+  status         String   @default("Pending")
+  submissionDate DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+}
+
+model Ticket {
+  id               String         @id
+  ticketNumber     String         @unique
+  userId           String
+  ticketCategoryId String
+  status           String         @default("VALID")
+  purchaseDate     DateTime       @default(now())
+  updatedAt        DateTime
+  category         TicketCategory @relation(fields: [ticketCategoryId], references: [id])
+  user             User           @relation(fields: [userId], references: [id])
+}
+
+model TicketCategory {
+  id          String   @id
+  name        String
+  price       Float
+  description String?
+  capacity    Int
+  sold        Int      @default(0)
+  isEnabled   Boolean  @default(true)
+  features    String[] @default([])
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  tickets     Ticket[]
+}
+
+model User {
+  id        String   @id
+  name      String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  tickets   Ticket[]
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  nomineeId  String
+  categoryId String
+  voterIp    String?
+  voterEmail String?
+  createdAt  DateTime @default(now())
+  Nominee    Nominee  @relation(fields: [nomineeId], references: [id])
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String   @default("info") // success, error, warning, info, edit
+  createdAt   DateTime @default(now())
+}
+
+model Speaker {
+  id        String   @id @default(cuid())
+  name      String
+  title     String
+  bio       String
+  topic     String
+  image     String?
+  twitter   String?
+  linkedin  String?
+  facebook  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
