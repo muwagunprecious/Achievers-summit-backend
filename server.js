@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
-const paymentRoutes = require('./routes/payments');
 const ticketRoutes = require('./routes/tickets');
 const bookingRoutes = require('./routes/bookings');
 
@@ -32,7 +31,6 @@ app.get('/', (req, res) => {
             root: '/',
             health: '/health',
             tickets: '/api/tickets',
-            payments: '/api/payments',
             bookings: '/api/bookings'
         }
     });
@@ -43,16 +41,13 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
-app.use('/api/payments', paymentRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Error handling middleware
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('❌ Server Error:', err.stack || err);
 
-    // Ensure we return a valid JSON object, avoiding circular references or non-enumerable props
     const response = {
         error: err.message || 'Internal server error',
         code: err.code || 'INTERNAL_ERROR',
@@ -62,7 +57,7 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).json(response);
 });
 
-// 404 handler - updated to show the path that failed
+// 404 handler
 app.use((req, res) => {
     res.status(404).json({
         error: 'Route not found',
@@ -72,7 +67,7 @@ app.use((req, res) => {
     });
 });
 
-// For local development or non-Vercel hosting
+// Start Server
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
     app.listen(PORT, () => {
         console.log(`\n🚀 Backend server running on http://localhost:${PORT}`);
@@ -80,5 +75,4 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
     });
 }
 
-// Export the app for Vercel serverless functions
 module.exports = app;
