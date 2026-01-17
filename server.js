@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const ticketRoutes = require('./routes/tickets');
 const bookingRoutes = require('./routes/bookings');
+const speakerRoutes = require('./routes/speakerRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -13,7 +14,7 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Increased limit for base64 images
 
 // Request logging
 app.use((req, res, next) => {
@@ -31,7 +32,8 @@ app.get('/', (req, res) => {
             root: '/',
             health: '/health',
             tickets: '/api/tickets',
-            bookings: '/api/bookings'
+            bookings: '/api/bookings',
+            speakers: '/api/speakers'
         }
     });
 });
@@ -43,6 +45,7 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/speakers', speakerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

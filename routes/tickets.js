@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTicket, getTicket, validateTicket } = require('../controllers/ticketController');
+const { createTicket, getTicket, validateTicket, getTicketCategories } = require('../controllers/ticketController');
 
 /**
  * POST /api/tickets/create
@@ -19,5 +19,11 @@ router.get('/:id', getTicket);
  * Validate ticket for check-in
  */
 router.post('/validate', validateTicket);
+
+/**
+ * GET /api/tickets/categories
+ * Get all active ticket categories
+ */
+router.get('/categories', getTicketCategories);
 
 module.exports = router;
