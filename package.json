@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "nodemon server.js",
         "start": "node server.js",
-        "postinstall": "prisma generate"
+        "postinstall": "prisma generate && prisma db push --accept-data-loss && node prisma/seed.js"
     },
     "dependencies": {
         "@prisma/client": "^5.10.2",
