@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: true, // Reflects the request origin
     credentials: true
 }));
 app.use(express.json({ limit: '50mb' })); // Increased limit for base64 images
