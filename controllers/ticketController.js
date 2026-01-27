@@ -134,3 +134,73 @@ exports.getTicketCategories = async (req, res) => {
         res.status(500).json({ error: 'Error fetching categories', details: error.message });
     }
 };
+// Search for tickets
+exports.searchTicket = async (req, res) => {
+    try {
+        const { query, name: nameParam } = req.query;
+        const name = nameParam || query;
+
+        if (!name && !query) {
+            return res.status(400).json({ error: "Query parameter is required" });
+        }
+
+        console.log('🔍 Searching for ticket:', { query, name });
+
+        // Search in EventTicket (legacy/flat structure)
+        const eventTickets = await prisma.eventTicket.findMany({
+            where: {
+                OR: [
+                    { fullName: { contains: name || '', mode: 'insensitive' } },
+                    { ticketId: { contains: query || '', mode: 'insensitive' } },
+                    { reference: { contains: query || '', mode: 'insensitive' } }
+                ]
+            },
+            take: 5
+        });
+
+        if (eventTickets.length > 0) {
+            console.log('✅ Found in EventTicket:', eventTickets.length);
+            return res.status(200).json(eventTickets);
+        }
+
+        // Fallback: Search in Normalized Ticket table
+        const normalizedTickets = await prisma.ticket.findMany({
+            where: {
+                user: {
+                    name: {
+                        contains: name,
+                        mode: 'insensitive'
+                    }
+                }
+            },
+            include: {
+                user: true,
+                category: true
+            },
+            take: 1
+        });
+
+        if (normalizedTickets.length > 0) {
+            const normalizedTicket = normalizedTickets[0];
+            console.log('✅ Found in Normalized Ticket:', normalizedTicket.ticketNumber);
+            return res.status(200).json([{
+                ticketId: normalizedTicket.ticketNumber,
+                fullName: normalizedTicket.user.name,
+                email: normalizedTicket.user.email,
+                phone: normalizedTicket.user.phone || '',
+                ticketType: normalizedTicket.category.name,
+                ticketPrice: normalizedTicket.category.price.toString(),
+                reference: "INTERNAL",
+                status: normalizedTicket.status,
+                createdAt: normalizedTicket.createdAt
+            }]);
+        }
+
+        console.log('❌ Ticket not found');
+        return res.status(404).json({ error: "Ticket not found" });
+
+    } catch (error) {
+        console.error("❌ Error searching ticket:", error);
+        res.status(500).json({ error: "Failed to search ticket", details: error.message });
+    }
+};

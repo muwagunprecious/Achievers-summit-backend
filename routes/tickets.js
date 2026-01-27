@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createTicket, getTicket, validateTicket, getTicketCategories } = require('../controllers/ticketController');
+const { createTicket, getTicket, validateTicket, getTicketCategories, searchTicket } = require('../controllers/ticketController');
 
 /**
  * POST /api/tickets/create
@@ -9,10 +9,16 @@ const { createTicket, getTicket, validateTicket, getTicketCategories } = require
 router.post('/create', createTicket);
 
 /**
- * GET /api/tickets/:id
- * Get ticket by ID
+ * GET /api/tickets/categories
+ * Get all active ticket categories
  */
-router.get('/:id', getTicket);
+router.get('/categories', getTicketCategories);
+
+/**
+ * GET /api/tickets/search
+ * Search for tickets
+ */
+router.get('/search', searchTicket);
 
 /**
  * POST /api/tickets/validate
@@ -21,9 +27,9 @@ router.get('/:id', getTicket);
 router.post('/validate', validateTicket);
 
 /**
- * GET /api/tickets/categories
- * Get all active ticket categories
+ * GET /api/tickets/:id
+ * Get ticket by ID
  */
-router.get('/categories', getTicketCategories);
+router.get('/:id', getTicket);
 
 module.exports = router;

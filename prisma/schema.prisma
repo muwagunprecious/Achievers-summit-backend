@@ -174,3 +174,17 @@ model Speaker {
   updatedAt DateTime @updatedAt
 }
 
+model Transaction {
+  id            String   @id @default(cuid())
+  reference     String   @unique
+  email         String
+  fullName      String
+  phone         String
+  amount        Float
+  ticketType    String
+  status        String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  provider      String   @default("PAYSTACK")
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

@@ -5,6 +5,8 @@ const cors = require('cors');
 const ticketRoutes = require('./routes/tickets');
 const bookingRoutes = require('./routes/bookings');
 const speakerRoutes = require('./routes/speakerRoutes');
+const paymentRoutes = require('./routes/payment');
+const paystackRoutes = require('./routes/paystack');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -46,6 +48,8 @@ app.get('/health', (req, res) => {
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/speakers', speakerRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/paystack', paystackRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
