@@ -25,18 +25,23 @@ router.get('/debug-db', async (req, res) => {
         const result = await prisma.$queryRawUnsafe("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'");
         const tables = result.map(row => row.tablename);
 
-        // Mask the database URL for security if we were logging it, but let's just show the host
+        // Mask the database URL for security, reveal host
         const dbUrl = process.env.DATABASE_URL || 'NOT SET';
-        const host = dbUrl.split('@')[1] || 'UNKNOWN';
+        const hostPart = dbUrl.split('@')[1] || 'UNKNOWN';
+        const host = hostPart.split('/')[0];
 
         res.json({
             status: 'ok',
-            host: host.split(':')[0], // Only show the hostname
+            database_host: host,
             tables,
             env: process.env.NODE_ENV
         });
     } catch (error) {
-        res.status(500).json({ error: error.message, stack: error.stack });
+        res.status(500).json({
+            error: error.message,
+            db_env_set: !!process.env.DATABASE_URL,
+            host_detected: process.env.DATABASE_URL ? (process.env.DATABASE_URL.split('@')[1] || '').split('/')[0] : 'NONE'
+        });
     }
 });
 
