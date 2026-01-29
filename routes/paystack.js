@@ -88,11 +88,17 @@ router.post('/webhook', async (req, res) => {
 
             console.log(`🎫 Ticket created: ${ticketId}`);
 
-            // 6. Asynchronous Fulfillment (PDF & Email)
-            // We don't 'await' these so the webhook responds fast, but we catch errors.
-            generateAndSendTicket(ticket, category).catch(err => {
+            // 6. Synchronous Fulfillment (PDF & Email)
+            // CRITICAL for Vercel: We MUST await this, otherwise the serverless function
+            // freezes immediately after res.json() and the email is never sent.
+            try {
+                await generateAndSendTicket(ticket, category);
+            } catch (err) {
                 console.error('❌ Fulfillment failed:', err);
-            });
+                // We typically still return 200 OK to Paystack because the PAYMENT was successful.
+                // If we return 500, Paystack will retry, which might be what we want if email failed temporarily.
+                // For now, let's log it.
+            }
 
             return res.json({ message: 'Webhook processed successfully' });
         }
