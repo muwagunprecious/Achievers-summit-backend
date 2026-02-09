@@ -8,6 +8,7 @@ const speakerRoutes = require('./routes/speakerRoutes');
 const paymentRoutes = require('./routes/payment');
 const paystackRoutes = require('./routes/paystack');
 const popupRoutes = require('./routes/popups');
+const communityRoutes = require('./routes/community');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -52,6 +53,7 @@ app.use('/api/speakers', speakerRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/paystack', paystackRoutes);
 app.use('/api/popups', popupRoutes);
+app.use('/api/community', communityRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
