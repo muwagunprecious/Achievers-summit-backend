@@ -1,9 +1,9 @@
-import crypto from 'crypto';
-import db from '../config/db.js';
+const crypto = require('crypto');
+const db = require('../config/db');
 
 const WEBHOOK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
-export const handleEventTicketWebhook = async (req, res) => {
+exports.handleEventTicketWebhook = async (req, res) => {
   if (!WEBHOOK_SECRET) {
     return res.status(500).send('Server misconfigured');
   }

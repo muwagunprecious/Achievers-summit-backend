@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../config/db');
 const { generateTicketPDF } = require('../services/pdfService');
 const { sendTicketEmail } = require('../services/emailService');
 
