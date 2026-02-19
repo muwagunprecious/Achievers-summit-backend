@@ -9,6 +9,10 @@ const paymentRoutes = require('./routes/payment');
 const paystackRoutes = require('./routes/paystack');
 const popupRoutes = require('./routes/popups');
 const communityRoutes = require('./routes/community');
+const faqRoutes = require('./routes/faq');
+const unitRoutes = require('./routes/units');
+const institutionRoutes = require('./routes/institutions');
+const ambassadorStatusRoutes = require('./routes/ambassador-status');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -54,6 +58,10 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/paystack', paystackRoutes);
 app.use('/api/popups', popupRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/faq', faqRoutes);
+app.use('/api/units', unitRoutes);
+app.use('/api/institutions', institutionRoutes);
+app.use('/api/ambassador-status', ambassadorStatusRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
